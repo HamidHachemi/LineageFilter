@@ -10,12 +10,13 @@ python3 -m pip install --force-reinstall .\lineagefilter-0.0.1-py3-none-any.whl
 #Windows
 py -m pip install --force-reinstall .\lineagefilter-0.0.1-py3-none-any.whl
 ```
+
 ## Data download
-All the data necessary to test the package can be downloaded from the following link : https://drive.google.com/file/d/1trTl9YnHN0_WgnvESQ4UOEt7hWT8cbBh/view?usp=drive_link  
-Moreover, mascot DAT files, which are necessary to obtain expect tables (see below) can be downloaded from 
+All the data necessary to test the package can be downloaded from the following link : https://drive.google.com/file/d/1kr0NIpLMPRZgua-Uvfqei-WHPVPmll3k/view?usp=drive_link  
+Moreover, mascot DAT files, which are necessary to obtain expect tables (see below) can be downloaded from the following link : https://drive.google.com/file/d/18CyChHcjhUHyuan3YNMDQDq8KKldZc-p/view?usp=drive_link
 
 ## Step by step Demo
-The following steps will demonstrate how to generate the LineageFilter's data for one sample : Candida_MiniMix100
+The following steps will demonstrate how to generate the LineageFilter's data for one sample : Candida_MiniMix100  
 Start by loading LineageFilter package, as well as others necessary python packages and data:
 ```python
 import LineageFilter
@@ -45,33 +46,81 @@ Then, expect tables can be obtained using the extractEXPECT function. To do so, 
 ```python
 with open("DATA\\dict_queries\\Candida_MiniMix100.pkl", 'rb') as f:
     query_peprank2expect = pickle.load(f)
-all_tables_Expect = LineageFilter.extractEXPECT(query_peprank2expect, path_to_DATfile, Lineage_tab, Prot2Tax)
+all_tables_Expect = LineageFilter.extractEXPECT(query_peprank2expect, "DATmascot\\Candida_MiniMix100.dat", Lineage_tab, Prot2Tax)
+```
 
+Finally, the LineageFilter's data for this sample can be obtained as follows :
+```python
+LF_dat = LineageFilter.getLFdat(all_tables_Quanti, all_tables_Expect, Weight_tree, FULL_Lineage, TaxID_ChangeLOG)
+```
+
+Moreover, the LineageFilter's data can be annotated (for the training/testing process, see below) as follows :
+```python
+#Get positive identifications for this sample
+with open("DATA\\TaxID__TP\\Candida_MiniMix100.txt",'r') as f:
+    list_TaxID_TP = [int(i.rstrip()) for i in f.readlines()]
+
+#Annotate this sample's data as a test sample
+Test_data = LineageFilter.Create_TRAIN_TEST_data(LF_dat, list_TaxID_TP, test=True)
+#Annotate this sample's data as a train sample
+Train_data = LineageFilter.Create_TRAIN_TEST_data(LF_dat, list_TaxID_TP, test=False)
 ```
 
 ## Simple Demo
-
+The following code demonstrate how this package can be used, by showing a full pipeline of its use : generate the train and test datas (at a given p-value), train the random forest model and test it.
 ```python
-from github import Github
+import LineageFilter
 
-# Authentication is defined via github.Auth
-from github import Auth
+#Import others necessary python packages
+import pandas as pd
+import os
+import pickle
 
-# using an access token
-auth = Auth.Token("access_token")
+#Import necessary data
+Weight_tree = pd.read_csv("DATA\\Weight_Tree.tsv", sep='\t')
+FULL_Lineage = pd.read_csv("DATA\\Taxonomy2021_FULL.tsv", sep='\t')
+TaxID_ChangeLOG = pd.read_csv("DATA\\taxid-changelog__relevant.tsv", sep='\t')
 
-# First create a Github instance:
+#Set the names of the quantifications columns, the taxonomical levels considered, and the samples used to test the model
+QnonSPE_colname = '# PEPS_shared'  ;  QSPE_colname = '# spePEPS'  ;  levels_LF = ['phylum', 'class', 'order', 'family', 'genus']
+names_TEST_dat = ['Q28078_20210309_M21_D1.txt', 'Run1_C1_2000ng.txt', 'Run1_U1_2000ng.txt', 'Run2_P1_2000ng.txt', 'SIHUMI_4bandes.txt']
 
-# Public Web Github
-g = Github(auth=auth)
+#Set the p-value considered, and the paths to the quantifications and expect tables
+pval = '0.050'
+path_QuantiTABs = "DATA\\Quanti_tables\\Unipept_"+pval+"\\"
+path_ExpectTABs = "DATA\\Expect_tables\\Pvalue_"+pval+"\\"
 
-# Github Enterprise with custom hostname
-g = Github(base_url="https://{hostname}/api/v3", auth=auth)
+List_DATAtrain = []  ;  List_DATAtest = []
+for file in os.listdir("DATA\\TaxID__TP\\"):
+    print('\n\t\t'+file.split('.txt')[0]+'\n')
+    print('\tGetting Quantification tables')  ;  all_tables_Quanti = []
+    for level in levels_LF:
+        all_tables_Quanti.append(pd.read_csv(path_QuantiTABs+file.split('.txt')[0]+'__'+level+'.tsv', sep='\t'))
+    
+    print('\tGetting Expect tables')  ;  all_tables_Expect = []
+    for level in levels_LF:
+        all_tables_Expect.append(pd.read_csv(path_ExpectTABs+file.split('.txt')[0]+'__'+level+'.tsv', sep='\t'))
+    
+    print('Getting LF tab')
+    LF_dat = LineageFilter.getLFdat(all_tables_Quanti, all_tables_Expect, Weight_tree, FULL_Lineage, TaxID_ChangeLOG,
+                      QnonSPE_colname=QnonSPE_colname, QSPE_colname=QSPE_colname)
+    
+    with open("DATA\\TaxID__TP\\"+file,'r') as f:
+        list_TaxID_TP = [int(i.rstrip()) for i in f.readlines()]
+    if file in names_TEST_dat:
+        tmp_test = LineageFilter.Create_TRAIN_TEST_data(LF_dat, list_TaxID_TP, test=True)  ;  tmp_test['sample_ID'] = file.split('.txt')[0]
+        List_DATAtest.append(tmp_test)
+    else:
+        tmp_train = LineageFilter.Create_TRAIN_TEST_data(LF_dat, list_TaxID_TP)  ;  tmp_train['sample_ID'] = file.split('.txt')[0]
+        List_DATAtrain.append(tmp_train)
 
-# Then play with your Github objects:
-for repo in g.get_user().get_repos():
-    print(repo.name)
+TRAIN_data = pd.concat(List_DATAtrain)  ;  TEST_data = pd.concat(List_DATAtest)
 
-# To close connections after use
-g.close()
+#Set the path to save the random forest model
+path_saveRF = "DATA\TRAIN_TEST\\RFmodel_Unipept_0.050.sav"
+#Create the model
+LineageFilter.Create_RFmodel(TRAIN_data, path_saveRF)
+
+#Test the model on the test data
+TEST_data_pred = LineageFilter.predict_class(TEST_data, path_saveRF)
 ```
