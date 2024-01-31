@@ -149,7 +149,7 @@ for thr in list(range(int(max(TEST_data_pred[TEST_data_pred['Class']==1]['# speP
 #ROC curve
 plt.figure(figsize=(20,20))  ;  linewidth = 6
 ##plot Unipept performances
-plt.plot(UNI_spepep['FPR'], UNI_spepep['TPR'], label=DATA_origin+" - specific PEPTIDES ("+pval+')', color='blue', linestyle='-', linewidth=linewidth)
+plt.plot(UNI_spepep['FPR'], UNI_spepep['TPR'], label="Unipept", color='blue', linestyle='-', linewidth=linewidth)
 ##plot LineageFilter performances
 true_y = TEST_data_pred['Class']  ;  y_prob = TEST_data_pred['pred']  ;  fpr, tpr, thresholds = roc_curve(true_y, y_prob)
 thresholds = list(np.arange(0,1+1e-3,1e-3))  ;  thresholds = thresholds[::-1]  ;  FPRs = []  ;  TPRs = []
@@ -174,7 +174,7 @@ plt.show()
 #F1-score curve
 plt.figure(figsize=(20,20))  ;  linewidth = 6
 ##plot Unipept performances
-plt.plot(UNI_spepep['FPR'], UNI_spepep['F1'], label=DATA_origin+" - specific PEPTIDES ("+pval+')', color='blue', linestyle='-', linewidth=linewidth)
+plt.plot(UNI_spepep['FPR'], UNI_spepep['F1'], label="Unipept", color='blue', linestyle='-', linewidth=linewidth)
 ##plot LineageFilter performances
 true_y = TEST_data_pred['Class']  ;  y_prob = TEST_data_pred['pred']  ;  fpr, tpr, thresholds = roc_curve(true_y, y_prob)  ;  F1_scores = []
 thresholds = list(np.arange(0,1+1e-3,1e-3))  ;  thresholds = thresholds[::-1]  ;  FPRs = []  ;  F1_scores = []
