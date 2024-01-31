@@ -157,6 +157,7 @@ for i in range(len(thresholds)):
     TP = sum(true_y[y_prob>=thresholds[i]])  ;  FN = sum(true_y[y_prob<thresholds[i]])
     FP = sum([1 if j==0 else 0 for j in true_y[y_prob>=thresholds[i]]])  ;  TPRs.append(TP/(TP+FN))
     TN = sum([1 if i==0 else 0 for i in true_y[y_prob<thresholds[i]]])  ;  FPRs.append(FP/(FP+TN))
+
 plt.plot(FPRs, TPRs, label="LineageFilter", color='green', linestyle='-', linewidth=linewidth)
 
 plt.plot(np.arange(0,1,1e-5), np.arange(0,1,1e-5), color='black', linestyle='--', linewidth=linewidth/5)
@@ -182,6 +183,7 @@ for i in range(len(thresholds)):
     TP = sum(true_y[y_prob>=thresholds[i]])  ;  FN = sum(true_y[y_prob<thresholds[i]])
     FP = sum([1 if j==0 else 0 for j in true_y[y_prob>=thresholds[i]]])  ;  F1_scores.append((2*TP)/(2*TP+FP+FN))
     TN = sum([1 if i==0 else 0 for i in true_y[y_prob<thresholds[i]]])  ;  FPRs.append(FP/(FP+TN))
+
 plt.plot(FPRs, F1_scores, label="LineageFilter", color='green', linestyle='-', linewidth=linewidth)
 
 plt.grid(visible=True)  ;  plt.legend(loc='lower right')
@@ -193,5 +195,4 @@ plt.xlim(1e-5,1)  ;  plt.ylim(-1e-2,1)  ;  plt.yticks(np.arange(0,1.1,0.1), mino
 plt.xlabel('False Positive Rate')  ;  plt.ylabel('F1-score')
 rc('font', **{'family':'DejaVu Sans', 'weight':'bold', 'size':26})  ;  plt.rc('font', size=35)
 plt.show()
-
 ```
