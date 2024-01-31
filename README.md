@@ -140,7 +140,6 @@ import numpy as np
 UNI_spepep = pd.DataFrame()
 n_posTOT = sum(TEST_data_pred['Class']==True)  ;  n_negTOT = sum(TEST_data_pred['Class']==False)
 for thr in list(range(int(max(TEST_data_pred[TEST_data_pred['Class']==1]['# spePEPS__genus']))))[::-1]:
-    print(thr)
     tmp = TEST_data_pred[TEST_data_pred['# spePEPS__genus']>=thr]  ;  TP = sum(tmp['Class']==True)  ;  FN = n_posTOT-TP
     FP = sum(tmp['Class']==False)  ;  TN = n_negTOT-FP
     if (TP!=0)|(FP!=0):
