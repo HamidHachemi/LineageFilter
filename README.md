@@ -3,9 +3,12 @@
 LineageFilter is a Python library enabling the estimation of the taxonomic composition of complex samples using metaproteomics and machine learning.
 
 ## Install
-
+After downloading the package file (.whl file), install it as follows:
 ```bash
-pip install PyGithub
+#Unix/macOS
+python3 -m pip install --force-reinstall .\lineagefilter-0.0.1-py3-none-any.whl
+#Windows
+py -m pip install --force-reinstall .\lineagefilter-0.0.1-py3-none-any.whl
 ```
 
 ## Simple Demo
