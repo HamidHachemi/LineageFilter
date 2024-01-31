@@ -17,6 +17,7 @@ Moreover, mascot DAT files, which are necessary to obtain expect tables (see bel
 
 ## Step by step Demo
 The following steps will demonstrate how to generate the LineageFilter's data for one sample : Candida_MiniMix100  
+For a demo on all the samples, please see below (Simple Demo part).  
 Start by loading LineageFilter package, as well as others necessary python packages and data:
 ```python
 import LineageFilter
