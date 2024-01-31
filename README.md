@@ -126,7 +126,7 @@ LineageFilter.Create_RFmodel(TRAIN_data, path_saveRF)
 TEST_data_pred = LineageFilter.predict_class(TEST_data, path_saveRF)
 ```
 
-## Evalute the performances
+## Evaluate the performances
 Once the predictions have been done, the performances of the model can be assessed by plotting the ROC curve (TPR according to FPR) and the F1-score curve (F1-score according to FPR).  
 This can be done, for the previously generated data, using the following code :
 ```python
