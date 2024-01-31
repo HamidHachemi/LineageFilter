@@ -10,6 +10,8 @@ python3 -m pip install --force-reinstall .\lineagefilter-0.0.1-py3-none-any.whl
 #Windows
 py -m pip install --force-reinstall .\lineagefilter-0.0.1-py3-none-any.whl
 ```
+## Data download
+All the data necessary to test the package can be downloaded from the following link : https://drive.google.com/file/d/1trTl9YnHN0_WgnvESQ4UOEt7hWT8cbBh/view?usp=drive_link
 
 ## Simple Demo
 
