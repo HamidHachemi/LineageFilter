@@ -124,3 +124,74 @@ LineageFilter.Create_RFmodel(TRAIN_data, path_saveRF)
 #Test the model on the test data
 TEST_data_pred = LineageFilter.predict_class(TEST_data, path_saveRF)
 ```
+
+## Evalute the performances
+Once the predictions have been done, the performances of the model can be assessed by plotting the ROC curve (TPR according to FPR) and the F1-score curve (F1-score according to FPR).  
+This can be done, for the previously generated data, using the following code :
+```python
+#Import the necessary packages
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve
+from matplotlib import rc
+import numpy as np
+
+#Assess Unipept performances
+UNI_spepep = pd.DataFrame()
+n_posTOT = sum(TEST_data_pred['Class']==True)  ;  n_negTOT = sum(TEST_data_pred['Class']==False)
+for thr in list(range(int(max(TEST_data_pred[TEST_data_pred['Class']==1]['# spePEPS__genus']))))[::-1]:
+    print(thr)
+    tmp = TEST_data_pred[TEST_data_pred['# spePEPS__genus']>=thr]  ;  TP = sum(tmp['Class']==True)  ;  FN = n_posTOT-TP
+    FP = sum(tmp['Class']==False)  ;  TN = n_negTOT-FP
+    if (TP!=0)|(FP!=0):
+        UNI_spepep = pd.concat([UNI_spepep, pd.DataFrame({'# spePEPS':[thr], 'FPR':[FP/(FP+TN)], 'TPR':[TP/(TP+FN)],
+                                                    'precision':[TP/(TP+FP)], 'F1':[2*TP/(2*TP+FP+FN)], 'thr':[thr]})])
+
+#ROC curve
+plt.figure(figsize=(20,20))  ;  linewidth = 6
+##plot Unipept performances
+plt.plot(UNI_spepep['FPR'], UNI_spepep['TPR'], label=DATA_origin+" - specific PEPTIDES ("+pval+')', color='blue', linestyle='-', linewidth=linewidth)
+##plot LineageFilter performances
+true_y = TEST_data_pred['Class']  ;  y_prob = TEST_data_pred['pred']  ;  fpr, tpr, thresholds = roc_curve(true_y, y_prob)
+thresholds = list(np.arange(0,1+1e-3,1e-3))  ;  thresholds = thresholds[::-1]  ;  FPRs = []  ;  TPRs = []
+for i in range(len(thresholds)):
+    TP = sum(true_y[y_prob>=thresholds[i]])  ;  FN = sum(true_y[y_prob<thresholds[i]])
+    FP = sum([1 if j==0 else 0 for j in true_y[y_prob>=thresholds[i]]])  ;  TPRs.append(TP/(TP+FN))
+    TN = sum([1 if i==0 else 0 for i in true_y[y_prob<thresholds[i]]])  ;  FPRs.append(FP/(FP+TN))
+plt.plot(FPRs, TPRs, label="LineageFilter", color='green', linestyle='-', linewidth=linewidth)
+
+plt.plot(np.arange(0,1,1e-5), np.arange(0,1,1e-5), color='black', linestyle='--', linewidth=linewidth/5)
+plt.grid(visible=True)  ;  plt.legend(loc='lower right')
+Xticks = np.array(list(np.arange(0,1e-4,1e-5))+list(np.arange(1e-4,1e-3,1e-4))+list(
+    np.arange(1e-3,1e-2,1e-3))+list(np.arange(1e-2,1e-1,1e-2))+list(np.arange(1e-1,1,1e-1))+[1])
+plt.gca().set_xscale('log')  ;  plt.xscale('log',base=10)  ;  plt.xticks(Xticks, minor=False)
+plt.xlim(1e-5,1)  ;  plt.ylim(-1e-2,1)  ;  plt.yticks(np.arange(0,1.1,0.1), minor=False)
+
+plt.xlabel('False Positive Rate')  ;  plt.ylabel('True Positive Rate')
+rc('font', **{'family':'DejaVu Sans', 'weight':'bold', 'size':26})  ;  plt.rc('font', size=35)
+plt.show()
+
+
+#F1-score curve
+plt.figure(figsize=(20,20))  ;  linewidth = 6
+##plot Unipept performances
+plt.plot(UNI_spepep['FPR'], UNI_spepep['F1'], label=DATA_origin+" - specific PEPTIDES ("+pval+')', color='blue', linestyle='-', linewidth=linewidth)
+##plot LineageFilter performances
+true_y = TEST_data_pred['Class']  ;  y_prob = TEST_data_pred['pred']  ;  fpr, tpr, thresholds = roc_curve(true_y, y_prob)  ;  F1_scores = []
+thresholds = list(np.arange(0,1+1e-3,1e-3))  ;  thresholds = thresholds[::-1]  ;  FPRs = []  ;  F1_scores = []
+for i in range(len(thresholds)):
+    TP = sum(true_y[y_prob>=thresholds[i]])  ;  FN = sum(true_y[y_prob<thresholds[i]])
+    FP = sum([1 if j==0 else 0 for j in true_y[y_prob>=thresholds[i]]])  ;  F1_scores.append((2*TP)/(2*TP+FP+FN))
+    TN = sum([1 if i==0 else 0 for i in true_y[y_prob<thresholds[i]]])  ;  FPRs.append(FP/(FP+TN))
+plt.plot(FPRs, F1_scores, label="LineageFilter", color='green', linestyle='-', linewidth=linewidth)
+
+plt.grid(visible=True)  ;  plt.legend(loc='lower right')
+Xticks = np.array(list(np.arange(0,1e-4,1e-5))+list(np.arange(1e-4,1e-3,1e-4))+list(
+    np.arange(1e-3,1e-2,1e-3))+list(np.arange(1e-2,1e-1,1e-2))+list(np.arange(1e-1,1,1e-1))+[1])
+plt.gca().set_xscale('log')  ;  plt.xscale('log',base=10)  ;  plt.xticks(Xticks, minor=False)
+plt.xlim(1e-5,1)  ;  plt.ylim(-1e-2,1)  ;  plt.yticks(np.arange(0,1.1,0.1), minor=False)
+
+plt.xlabel('False Positive Rate')  ;  plt.ylabel('F1-score')
+rc('font', **{'family':'DejaVu Sans', 'weight':'bold', 'size':26})  ;  plt.rc('font', size=35)
+plt.show()
+
+```
