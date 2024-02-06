@@ -118,7 +118,7 @@ for file in os.listdir("DATA\\TaxID__TP\\"):
 TRAIN_data = pd.concat(List_DATAtrain)  ;  TEST_data = pd.concat(List_DATAtest)
 
 #Set the path to save the random forest model
-path_saveRF = "DATA\TRAIN_TEST\\RFmodel_Unipept_0.050.sav"
+path_saveRF = "DATA\TRAIN_TEST\\Unipept___MetaRF__genus_0.050.sav"
 #Create the model
 LineageFilter.Create_RFmodel(TRAIN_data, path_saveRF)
 
