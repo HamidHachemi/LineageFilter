@@ -13,7 +13,10 @@ py -m pip install --force-reinstall .\lineagefilter-0.0.1-py3-none-any.whl
 
 ## Data download
 All the data necessary to test the package can be downloaded from the following link : https://drive.google.com/file/d/1uT9X9I-YLRJA79mpt0XKkRvRpXj_W-C7/view?usp=drive_link  
-Moreover, mascot DAT files, which are necessary to obtain expect tables (see below) can be downloaded from the following link : https://drive.google.com/file/d/18CyChHcjhUHyuan3YNMDQDq8KKldZc-p/view?usp=drive_link
+Moreover, mascot DAT files, which are necessary to obtain expect tables (see below) can be downloaded from the following link : https://drive.google.com/file/d/18CyChHcjhUHyuan3YNMDQDq8KKldZc-p/view?usp=drive_link  
+The second dataset's data can be downloaded from the following links :  
+LF's data : https://drive.google.com/file/d/1WzwSUzPO66xKu38piF1Dq-KgnQgmytUJ/view?usp=drive_link  
+mascot DAT files : https://drive.google.com/file/d/1eUfAZH4uVD-ErYM6I-bsvXQ8QIJS2WFI/view?usp=drive_link
 
 ## Step by step Demo
 The following steps will demonstrate how to generate the LineageFilter's data for one sample : Candida_MiniMix100  
