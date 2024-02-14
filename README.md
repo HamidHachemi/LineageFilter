@@ -77,20 +77,16 @@ This table contains the the taxID and name of each genus, and its lineage (super
 ```python
 import LineageFilter
 
-#Import others necessary python packages
-import pandas as pd
-import os
-import pickle
-
 #Import necessary data
-##Used to create Quantification & Expect tables
-Lineage_tab = pd.read_csv("DATA\\Taxonomy2021_levelsRelevant.tsv", sep='\t')
-Prot2Tax = pd.read_csv("DATA\\Prot2TaxID_NCBInrS2021.tsv", sep='\t')
-
-##Used in LineageFilter process
-Weight_tree = pd.read_csv("DATA\\Weight_Tree.tsv", sep='\t')
-FULL_Lineage = pd.read_csv("DATA\\Taxonomy2021_FULL.tsv", sep='\t')
 TaxID_ChangeLOG = pd.read_csv("DATA\\taxid-changelog__relevant.tsv", sep='\t')
+path_to_MPA = "DATA\\UnipeptMPA_results\\MPA_results__0.050\\Candida_MiniMix100_mpa.csv"
+path_saveRF = "DATA\TRAIN_TEST\\Unipept___MetaRF__genus_0.050.sav"
+
+#Get predictions values
+LF_dat = LineageFilter.predict_class(LF_dat, path_saveRF)
+
+#Get Unipept's filtered table using LF method
+MPA_save_table = LineageFilter.get_FilteredMPA(LF_dat, path_to_MPA, TaxID_ChangeLOG, LF_threshold=0.20, quantification='specific')
 ```
 
 ## Simple Demo
