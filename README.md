@@ -71,6 +71,28 @@ Test_data = LineageFilter.Create_TRAIN_TEST_data(LF_dat, list_TaxID_TP, test=Tru
 Train_data = LineageFilter.Create_TRAIN_TEST_data(LF_dat, list_TaxID_TP, test=False)
 ```
 
+## Getting Unipept's results with LF filtering
+The following steps will demonstrate how to generate a table containing all the genera validated by the LF method (threshold = LF_threshold parameter of LineageFilter.get_FilteredMPA function, default 0.20), using data generated as previously described.  
+This table contains the the taxID and name of each genus, and its lineage (superkingdom, phylum, class, order and family), as well as a quantification feature (quantification parameter of LineageFilter.get_FilteredMPA function, default : 'specific', corresponds to Unipept's default value (MPA table of the website, filtered by LF)).
+```python
+import LineageFilter
+
+#Import others necessary python packages
+import pandas as pd
+import os
+import pickle
+
+#Import necessary data
+##Used to create Quantification & Expect tables
+Lineage_tab = pd.read_csv("DATA\\Taxonomy2021_levelsRelevant.tsv", sep='\t')
+Prot2Tax = pd.read_csv("DATA\\Prot2TaxID_NCBInrS2021.tsv", sep='\t')
+
+##Used in LineageFilter process
+Weight_tree = pd.read_csv("DATA\\Weight_Tree.tsv", sep='\t')
+FULL_Lineage = pd.read_csv("DATA\\Taxonomy2021_FULL.tsv", sep='\t')
+TaxID_ChangeLOG = pd.read_csv("DATA\\taxid-changelog__relevant.tsv", sep='\t')
+```
+
 ## Simple Demo
 The following code demonstrate how this package can be used, by showing a full pipeline of its use : generate the train and test datas (at a given p-value), train the random forest model and test it.
 ```python
