@@ -72,7 +72,7 @@ Train_data = LineageFilter.Create_TRAIN_TEST_data(LF_dat, list_TaxID_TP, test=Fa
 ```
 
 ## Getting Unipept's results with LF filtering
-The following steps will demonstrate how to generate a table containing all the genera validated by the LF method (threshold = LF_threshold parameter of LineageFilter.get_FilteredMPA function, default 0.15), using data generated as previously described.  
+The following steps will demonstrate how to generate a table containing all the genera validated by the LF method (threshold = LF_threshold parameter of LineageFilter.get_FilteredMPA function, default 0.30), using data generated as previously described.  
 This table contains the the taxID and name of each genus, and its lineage (superkingdom, phylum, class, order and family), as well as a quantification feature (quantification parameter of LineageFilter.get_FilteredMPA function, default : 'specific', corresponds to Unipept's default value (MPA table of the website, filtered by LF)).
 ```python
 import LineageFilter
